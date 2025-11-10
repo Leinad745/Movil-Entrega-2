@@ -1,19 +1,19 @@
 package com.example.baseproject.model
 
 data class Anime (
-    val name : String,
-    val url : String
+    val id : String,
+    val type: String,
+    val attributes: AnimeAttributes
     )
 
 data class AnimeListData
     (val data : List<Anime>)
 
-data class AnimeDetail (
-    val name : String,
-    val synopsis : String,
+data class AnimeAttributes(
+    val description: String,
+    val canonicalTitle: String,
     var status : String,
-    val posterImage : String,
     var episodeCount : Int,
-    var averageRating : Double,
-    val genre : String
+    var ageRating: String?,
+    val userCount: Int
 )
