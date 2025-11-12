@@ -69,10 +69,12 @@ class UserRepository(context: Context) {
     }
 
     fun actualizarImagenPerfil(uri: Uri?) {
-        obtenerUsuario()?.copy(imagenUri = uri)
-        obtenerUsuario()?.let { usuarioActual ->
-            val usaurioActualizado = usuarioActual.copy(imagenUri = uri)
-            guardarUsuario(usaurioActualizado)
+
+        val usuarioActual = obtenerUsuario()
+
+        if (usuarioActual != null) {
+            val usuarioActualizado = usuarioActual.copy(imagenUri = uri)
+            guardarUsuario(usuarioActualizado)
         }
     }
 }
