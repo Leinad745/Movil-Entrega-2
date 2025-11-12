@@ -69,10 +69,9 @@ class UserRepository(context: Context) {
     }
 
     fun actualizarImagenPerfil(uri: Uri?) {
-        // 1. Obtén el usuario actual UNA SOLA VEZ.
+
         val usuarioActual = obtenerUsuario()
 
-        // 2. Si el usuario existe, crea una nueva instancia actualizada y guárdala.
         if (usuarioActual != null) {
             val usuarioActualizado = usuarioActual.copy(imagenUri = uri)
             guardarUsuario(usuarioActualizado)
