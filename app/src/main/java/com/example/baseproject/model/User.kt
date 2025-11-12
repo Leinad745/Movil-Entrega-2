@@ -4,5 +4,6 @@ data class Usuario(
     val mail: String,
     val nombreUsuario: String,
     val contrasena: String,
-    val createdAT: Long = System.currentTimeMillis()) {
+    val createdAT: Long = System.currentTimeMillis(),
+    val favoritos: List<String>) {
 }

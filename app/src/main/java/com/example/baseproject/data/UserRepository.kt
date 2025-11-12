@@ -15,6 +15,7 @@ class UserRepository(context: Context) {
         private const val KEY_CONTRASENA = "key_contrasena"
         private const val KEY_CREATED_AT = "key_created_at"
         private const val KEY_HAS_USER = "has_user"
+        private const val KEY_FAVORITOS = "key_favoritos"
     }
 
     fun guardarUsuario(usuario: Usuario) {
@@ -22,6 +23,7 @@ class UserRepository(context: Context) {
             putString(KEY_MAIL, usuario.mail)
             putString(KEY_NOMBRE_USUARIO, usuario.nombreUsuario)
             putString(KEY_CONTRASENA, usuario.contrasena)
+            putString(KEY_FAVORITOS, usuario.favoritos.joinToString(","))
             putLong(KEY_CREATED_AT, usuario.createdAT)
             putBoolean(KEY_HAS_USER, true)
             apply()
@@ -39,9 +41,10 @@ class UserRepository(context: Context) {
         val mail = preferencias.getString(KEY_MAIL, "") ?: ""
         val contrasena = preferencias.getString(KEY_CONTRASENA, "") ?: ""
         val createdAt = preferencias.getLong(KEY_CREATED_AT, 0L)
+        val favoritos = preferencias.getString(KEY_FAVORITOS, "")?.split(",") ?: emptyList()
 
         return if (username.isNotEmpty() && contrasena.isNotEmpty()) {
-            Usuario(mail, username, contrasena, createdAt)
+            Usuario(mail, username, contrasena, createdAt, favoritos)
         } else null
     }
 
