@@ -1,4 +1,8 @@
 package com.example.baseproject.model
 
-class User {
+data class Usuario(
+    val mail: String,
+    val nombreUsuario: String,
+    val contrasena: String,
+    val createdAT: Long = System.currentTimeMillis()) {
 }
