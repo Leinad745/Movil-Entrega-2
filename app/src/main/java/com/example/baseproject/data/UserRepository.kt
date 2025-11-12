@@ -4,6 +4,8 @@ import android.content.Context
 import com.example.baseproject.model.Usuario
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import android.net.Uri
+import androidx.core.net.toUri
 
 class UserRepository(context: Context) {
     private val preferencias: SharedPreferences =
@@ -16,6 +18,8 @@ class UserRepository(context: Context) {
         private const val KEY_CREATED_AT = "key_created_at"
         private const val KEY_HAS_USER = "has_user"
         private const val KEY_FAVORITOS = "key_favoritos"
+        private const val KEY_IMAGEN_URI = "key_imagen_uri"
+
     }
 
     fun guardarUsuario(usuario: Usuario) {
@@ -26,6 +30,7 @@ class UserRepository(context: Context) {
             putString(KEY_FAVORITOS, usuario.favoritos.joinToString(","))
             putLong(KEY_CREATED_AT, usuario.createdAT)
             putBoolean(KEY_HAS_USER, true)
+            putString(KEY_IMAGEN_URI, usuario.imagenUri?.toString())
             apply()
         }
     }
@@ -41,10 +46,16 @@ class UserRepository(context: Context) {
         val mail = preferencias.getString(KEY_MAIL, "") ?: ""
         val contrasena = preferencias.getString(KEY_CONTRASENA, "") ?: ""
         val createdAt = preferencias.getLong(KEY_CREATED_AT, 0L)
+
+        val favoritosStr = preferencias.getString(KEY_FAVORITOS, "") ?: ""
         val favoritos = preferencias.getString(KEY_FAVORITOS, "")?.split(",") ?: emptyList()
 
+        val imagenUriString = preferencias.getString(KEY_IMAGEN_URI, null)
+        val imagenUri = imagenUriString?.toUri()
+
+
         return if (username.isNotEmpty() && contrasena.isNotEmpty()) {
-            Usuario(mail, username, contrasena, createdAt, favoritos)
+            Usuario(mail, username, contrasena, createdAt, favoritos, imagenUri)
         } else null
     }
 
@@ -55,5 +66,13 @@ class UserRepository(context: Context) {
     fun verificarContrasena(contraInput: String): Boolean {
         val contrasenaGuardada = preferencias.getString(KEY_CONTRASENA, "")
         return contrasenaGuardada == contraInput
+    }
+
+    fun actualizarImagenPerfil(uri: Uri?) {
+        obtenerUsuario()?.copy(imagenUri = uri)
+        obtenerUsuario()?.let { usuarioActual ->
+            val usaurioActualizado = usuarioActual.copy(imagenUri = uri)
+            guardarUsuario(usaurioActualizado)
+        }
     }
 }
