@@ -48,8 +48,7 @@ class UserRepository(context: Context) {
         val createdAt = preferencias.getLong(KEY_CREATED_AT, 0L)
 
         val favoritosStr = preferencias.getString(KEY_FAVORITOS, "") ?: ""
-        val favoritos = preferencias.getString(KEY_FAVORITOS, "")?.split(",") ?: emptyList()
-
+        val favoritos = if (favoritosStr.isNotEmpty()) favoritosStr.split(",") else emptyList()
         val imagenUriString = preferencias.getString(KEY_IMAGEN_URI, null)
         val imagenUri = imagenUriString?.toUri()
 
