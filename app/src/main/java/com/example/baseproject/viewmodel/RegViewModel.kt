@@ -28,10 +28,63 @@ class RegViewModel(application: Application) : AndroidViewModel(application) {
         return userRepository.usuarioGuardado()
     }
 
-    fun registroUsuario(nombreUsuario: String, email: String, contrasena: String){
+    fun registroUsuario(nombreUsuario: String, email: String, contrasena: String): Boolean {
         return if (nombreUsuario.isNotBlank() && email.isNotBlank() && contrasena.isNotBlank()) {
-            val nuevoUsuario = Usuario(email, nombreUsuario, contrasena, List)
+            val nuevoUsuario = Usuario(email, nombreUsuario, contrasena, favoritos = emptyList())
+            userRepository.guardarUsuario(nuevoUsuario)
+            _usuarioActual.value = nuevoUsuario
+            _autenticado.value = true
+            _registroExitoso.value = true
+            true
+        } else {
+            _errorLogin.value = "Por favor, complete todos los campos."
+            _registroExitoso.value = false
+            false
         }
+    }
+
+    fun login(contrasena: String): Boolean {
+        return if (userRepository.verificarContrasena(contrasena)) {
+            _usuarioActual.value = userRepository.obtenerUsuario()
+            _autenticado.value = true
+            _errorLogin.value = null
+            true
+        } else {
+            _errorLogin.value = null
+            false
+        }
+    }
+
+    fun loginCredenciales(username: String, password: String) : Boolean {
+        val usuario = userRepository.obtenerUsuario()
+        return if (usuario != null && usuario.nombreUsuario == username && usuario.contrasena == password) {
+            _usuarioActual.value = usuario
+            _autenticado.value = true
+            _errorLogin.value = null
+            true
+        } else {
+            _errorLogin.value = "Nombre de usuario o contraseña incorrectos."
+            false
+        }
+    }
+
+    fun logout() {
+        _autenticado.value = false
+        _usuarioActual.value = userRepository.obtenerUsuario()
+    }
+
+    fun limpiarError() {
+        _errorLogin.value = null
+    }
+
+    fun refrescarUsuario() {
+        _usuarioActual.value = userRepository.obtenerUsuario()
+    }
+
+    fun borrarUsuario() {
+        userRepository.borrarUsuario()
+        _usuarioActual.value = null
+        _autenticado.value = false
     }
 
     init {

@@ -8,5 +8,4 @@ data class Usuario(
     val contrasena: String,
     val createdAT: Long = System.currentTimeMillis(),
     val favoritos: List<String>,
-    val imagenUri: Uri? = null) {
-}
+    val imagenUri: Uri? = null)
