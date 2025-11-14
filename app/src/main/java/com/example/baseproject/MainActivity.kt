@@ -11,9 +11,7 @@ import com.example.baseproject.data.AnimeRepository
 import com.example.baseproject.model.PosterImage
 import com.example.baseproject.ui.screens.WelcomeScreen
 import com.example.baseproject.ui.theme.BaseAndroidProjectTheme
-import com.example.baseproject.view.PerfilScreen
 import com.example.baseproject.view.animeListScreen
-import com.example.baseproject.viewmodel.PerfilViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -31,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PerfilScreen(PerfilViewModel(application))
+                    animeListScreen()
                 }
             }
         }
