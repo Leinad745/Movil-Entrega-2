@@ -8,8 +8,8 @@ import retrofit2.http.Query
 interface KitsuApiService {
     @GET("anime")
     suspend fun fetchAnimeList(
-        @Query("limit") limit : Int = 20,
-        @Query("offset") offset : Int = 0
+        @Query("page[limit]") limit : Int = 20,
+        @Query("page[offset]") offset : Int = 0
 
     ): AnimeListData
 
