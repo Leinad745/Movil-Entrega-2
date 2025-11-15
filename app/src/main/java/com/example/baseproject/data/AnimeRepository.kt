@@ -2,6 +2,7 @@ package com.example.baseproject.data
 
 import com.example.baseproject.data.remote.KitsuApiService
 import com.example.baseproject.data.remote.NetworkModule
+import com.example.baseproject.model.Anime
 import com.example.baseproject.model.AnimeListData
 
 class AnimeRepository
@@ -11,5 +12,14 @@ class AnimeRepository
         return api.fetchAnimeList(limit, offset)
     }
 
+    suspend fun getAnimeById(animeId: String): Anime? {
+        try {
+            val response = api.fetchAnimeDetail(id = animeId)
+            return response.data?.firstOrNull()
+
+        }catch (e: Exception) {
+            throw e
+        }
+    }
 
 }
