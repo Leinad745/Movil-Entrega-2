@@ -1,5 +1,6 @@
 package com.example.baseproject.view
 
+import android.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +43,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.baseproject.model.Anime
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import com.example.baseproject.viewmodel.RegViewModel
+
 
 @Composable
 fun AnimeListScreen(
@@ -198,6 +206,16 @@ fun AnimeScreen(
 
 @Composable
 fun AnimeDetailContent(anime: Anime) {
+    val viewModel: AnimeViewModel = viewModel()
+    val regViewModel: RegViewModel = viewModel()
+
+    val currentUser by regViewModel.usuarioActual.observeAsState()
+
+    val isFavorite = remember(currentUser, anime.id) {
+        currentUser?.favoritos?.contains(anime.id) == true
+    }
+
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -218,11 +236,29 @@ fun AnimeDetailContent(anime: Anime) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = anime.attributes.canonicalTitle,
-                    style = androidx.compose.material3.MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Title takes up available space
+                    Text(
+                        text = anime.attributes.canonicalTitle,
+                        style = androidx.compose.material3.MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        viewModel.toggleFavorite(anime.id)
+                        regViewModel.updateUser()
+                    }) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                            contentDescription = "Favorite",
+                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Gray
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 

@@ -20,6 +20,13 @@ class UserRepository(context: Context) {
         private const val KEY_FAVORITOS = "key_favoritos"
         private const val KEY_IMAGEN_URI = "key_imagen_uri"
 
+        @Volatile        private var INSTANCE: UserRepository? = null
+
+        fun getInstance(context: Context): UserRepository {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: UserRepository(context).also { INSTANCE = it }
+            }
+        }
     }
 
     fun guardarUsuario(usuario: Usuario) {
@@ -76,4 +83,32 @@ class UserRepository(context: Context) {
             guardarUsuario(usuarioActualizado)
         }
     }
+
+    //funciones de favoritos
+    fun getFavorites(): List<String> {
+        val usuario = obtenerUsuario()
+        return usuario?.favoritos ?: emptyList()
+    }
+
+    fun addFavorite(animeId: String) {
+        val usuario = obtenerUsuario()
+        usuario?.let {
+            // Usamos un Set para evitar duplicados y luego lo convertimos a lista
+            val updatedFavorites = it.favoritos.toMutableSet()
+            updatedFavorites.add(animeId)
+            val updatedUser = it.copy(favoritos = updatedFavorites.toList())
+            guardarUsuario(updatedUser)
+        }
+    }
+
+    fun removeFavorite(animeId: String) {
+        val usuario = obtenerUsuario()
+        usuario?.let {
+            val updatedFavorites = it.favoritos.toMutableList()
+            updatedFavorites.remove(animeId)
+            val updatedUser = it.copy(favoritos = updatedFavorites.toList())
+            guardarUsuario(updatedUser)
+        }
+    }
+
 }

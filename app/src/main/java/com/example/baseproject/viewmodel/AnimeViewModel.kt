@@ -7,19 +7,55 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.example.baseproject.data.UserRepository
+import com.example.baseproject.model.Anime
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+
+data class AnimeListUiState(
+    val animes: List<Anime> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val limit: Int = 20,
+    val offset: Int = 0,
+    val hasMoreData: Boolean = true
+)
+
+data class AnimeDetailState(
+    val anime: Anime? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
+
+class AnimeViewModel(application: Application) : AndroidViewModel(application){
+
+    private val repository: AnimeRepository = AnimeRepository()
+    private val userRepository: UserRepository = UserRepository.getInstance(application)
 
 
-class AnimeViewModel(
-   private val repository: AnimeRepository = AnimeRepository()
-
-): ViewModel() {
-
-    private  val _listState = MutableStateFlow(animeListUiState())
-    var listState: StateFlow<animeListUiState> = _listState.asStateFlow()
+    private val _listState = MutableStateFlow(AnimeListUiState())
+    var listState: StateFlow<AnimeListUiState> = _listState.asStateFlow()
         private set
 
-    private  val _detailState = MutableStateFlow(animeDetailState())
-    var detailState: StateFlow<animeDetailState> = _detailState.asStateFlow()
+    private val _detailState = MutableStateFlow(AnimeDetailState())
+    var detailState: StateFlow<AnimeDetailState> = _detailState.asStateFlow()
+
+    fun toggleFavorite(animeId: String) {
+        viewModelScope.launch {
+            val currentFavorites = userRepository.getFavorites()
+            if (currentFavorites.contains(animeId)) {
+                userRepository.removeFavorite(animeId)
+                println("Eliminado de favoritos: $animeId")
+            } else {
+                userRepository.addFavorite(animeId)
+                println("Añadido a favoritos: $animeId")
+            }
+        }
+    }
+
+    fun isFavorite(animeId: String): Boolean {
+        return userRepository.getFavorites().contains(animeId)
+    }
 
     fun loadList(limit: Int = 20, offset: Int = 0, loadMore: Boolean = false) {
         if(!loadMore) {
