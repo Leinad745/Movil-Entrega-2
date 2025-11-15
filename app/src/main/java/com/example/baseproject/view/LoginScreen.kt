@@ -1,5 +1,6 @@
 package com.example.baseproject.view
 
+import com.example.baseproject.viewmodel.RegViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -20,39 +21,34 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.baseproject.viewmodel.RegViewModel
-
-//HAY QUE IMPLEMENTAR PRIMERO EL NAVIGATOR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Registro(
+fun LoginScreen(
     navController: NavController,
     regViewModel: RegViewModel? = null
 ) {
-    val sharedAuthViewModel = regViewModel ?: viewModel()
-    var mail by remember { mutableStateOf("") }
+    val sharedRegViewModel = regViewModel ?: viewModel()
     var nombreUsuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
-    var confirmarContrasena by remember { mutableStateOf("") }
     var contrasenaVisible by remember { mutableStateOf(false) }
-    var confirmarContrasenaVisible by remember { mutableStateOf(false) }
 
-    val errorLogin by sharedAuthViewModel.errorLogin.observeAsState()
-    val registroExitoso by sharedAuthViewModel.registroExitoso.observeAsState(false)
+    val errorLogin by sharedRegViewModel.errorLogin.observeAsState()
+    val autenticado by sharedRegViewModel.autenticado.observeAsState(false)
 
-    LaunchedEffect(registroExitoso) {
-        if (registroExitoso) {
-            // navController.navigate("pantalla_destino") {
-            //     popUpTo("registro") { inclusive = true }
+    LaunchedEffect(autenticado) {
+        if (autenticado) {
+            // Navegar a la pantalla principal o de inicio
+            // navController.navigate("home") {
+            //     popUpTo("login") { inclusive = true }
             // }
-            //
         }
     }
 
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Crea Tu Cuenta") })
+            TopAppBar(title = { Text("Iniciar Sesión") })
         }
     ) { innerPadding ->
         Column(
@@ -64,7 +60,7 @@ fun Registro(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Registrarse",
+                text = "¡Hola de nuevo!",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -74,22 +70,9 @@ fun Registro(
                 value = nombreUsuario,
                 onValueChange = {
                     nombreUsuario = it
-                    sharedAuthViewModel.limpiarError()
+                    sharedRegViewModel.limpiarError()
                 },
-                label = { Text("Nombre de usuario") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                singleLine = true
-            )
-
-            OutlinedTextField(
-                value = mail,
-                onValueChange = {
-                    mail = it
-                    sharedAuthViewModel.limpiarError()
-                },
-                label = { Text("Correo") },
+                label = { Text("Nombre") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -100,7 +83,7 @@ fun Registro(
                 value = contrasena,
                 onValueChange = {
                     contrasena = it
-                    sharedAuthViewModel.limpiarError()
+                    sharedRegViewModel.limpiarError()
                 },
                 label = { Text("Contraseña") },
                 modifier = Modifier
@@ -119,29 +102,6 @@ fun Registro(
                 singleLine = true
             )
 
-            OutlinedTextField(
-                value = confirmarContrasena,
-                onValueChange = {
-                    confirmarContrasena = it
-                    sharedAuthViewModel.limpiarError()
-                },
-                label = { Text("Confirmar Contraseña") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                visualTransformation = if (confirmarContrasenaVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    IconButton(onClick = { confirmarContrasenaVisible = !confirmarContrasenaVisible }) {
-                        Icon(
-                            imageVector = if (confirmarContrasenaVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (confirmarContrasenaVisible) "Ocultar contraseña" else "Mostrar contraseña"
-                        )
-                    }
-                },
-                singleLine = true
-            )
-
             errorLogin?.let { error ->
                 Text(
                     text = error,
@@ -150,38 +110,41 @@ fun Registro(
                 )
             }
 
-            if (contrasena != confirmarContrasena && confirmarContrasena.isNotEmpty()) {
-                Text(
-                    text = "Las contraseñas no coinciden",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-
             Button(
                 onClick = {
-                    if (contrasena == confirmarContrasena) {
-                        sharedAuthViewModel.registroUsuario(nombreUsuario, mail, contrasena)
-                    }
+                    sharedRegViewModel.loginCredenciales(nombreUsuario, contrasena)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                enabled = nombreUsuario.isNotBlank() && contrasena.isNotBlank() && contrasena == confirmarContrasena
+                enabled = nombreUsuario.isNotBlank() && contrasena.isNotBlank()
             ) {
                 Text(
-                    text = "Crear Cuenta",
+                    text = "Iniciar Sesión",
                     fontSize = 18.sp
                 )
             }
-        }
-    }
-}
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun RegistroPreview() {
-    MaterialTheme {
-        Registro(navController = rememberNavController())
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "¿No tienes cuenta? ",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                TextButton(
+                    onClick = {/*
+                    AÑADIR
+                        navController.navigate(AppScreen.Register.route)
+                        sharedAuthViewModel.clearError()*/
+                    }
+                ) {
+                    Text("Regístrate")
+                }
+            }
+        }
     }
 }
