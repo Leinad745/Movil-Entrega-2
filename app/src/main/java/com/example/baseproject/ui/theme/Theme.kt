@@ -16,17 +16,17 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Mauve80,
+    primary = Lavender80,
     secondary = Blue80,
-    tertiary = Teal80,
+    tertiary = Red80,
     background = BaseDark,
     surface = SurfaceDark
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Mauve40,
+    primary = Lavender40,
     secondary = Blue40,
-    tertiary = Teal40,
+    tertiary = Red40,
     background = BaseLight,
     surface = SurfaceLight
 )
@@ -35,7 +35,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun BaseAndroidProjectTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

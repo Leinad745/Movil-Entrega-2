@@ -136,10 +136,8 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 TextButton(
-                    onClick = {/*
-                    AÑADIR
-                        navController.navigate(AppScreen.Register.route)
-                        sharedAuthViewModel.clearError()*/
+                    onClick = {
+                        navController.navigate("register")
                     }
                 ) {
                     Text("Regístrate")

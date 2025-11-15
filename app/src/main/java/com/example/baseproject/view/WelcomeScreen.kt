@@ -1,5 +1,7 @@
-package com.example.baseproject.ui.screens
+package com.example.baseproject.view
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,11 +23,13 @@ import com.example.baseproject.ui.theme.BaseAndroidProjectTheme
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
-    onGetStartedClick: () -> Unit = {}
+    onLoginClick: () -> Unit = {},
+    onRegisterClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -49,13 +54,19 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(48.dp))
 
         Button(
-            onClick = onGetStartedClick
+            onClick = onLoginClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
         ) {
             Text(text = "Iniciar sesión")
         }
 
         Button(
-            onClick = onGetStartedClick
+            onClick = onRegisterClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
         ) {
             Text(text = "Registrarse")
         }
@@ -70,7 +81,7 @@ fun WelcomeScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WelcomeScreenDarkPreview() {
     BaseAndroidProjectTheme {
