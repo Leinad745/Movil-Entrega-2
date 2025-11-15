@@ -13,9 +13,9 @@ interface KitsuApiService {
 
     ): AnimeListData
 
-    @GET("id")
+    @GET("anime")
     suspend fun fetchAnimeDetail(
-        @Query("id") id : String
-    ): Anime
+        @Query("filter[id]") id : String
+    ): AnimeListData
 
 }

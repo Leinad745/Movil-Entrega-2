@@ -20,9 +20,8 @@ sealed class AppScreen(val route: String){
     object HomeScreen : AppScreen("home_screen")
     object WelcomeScreen : AppScreen("welcome_screen")
     object MainAnimeScreen : AppScreen("main_anime_screen")
-    object AnimeDetailCard : AppScreen("anime_detail/{animeId}")
     object AnimeSearch : AppScreen("anime_search")
-    object AnimeDetail : AppScreen("anime_detail/{animeName}") {
+    object AnimeDetail : AppScreen("anime_detail/{animeId}") {
         fun createRoute(animeName: String) = "anime_detail/$animeName"
     }
     object Favs : AppScreen("favs")
@@ -75,9 +74,22 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
         }
 
         composable(AppScreen.MainAnimeScreen.route) {
-            animeListScreen()
+            AnimeListScreen (
+                onAnimeClickScreen = { animeId ->
+                    navController.navigate(AppScreen.AnimeDetail.createRoute(animeId))
+                }
+            )
         }
-
+        composable(
+            route = AppScreen.AnimeDetail.route,
+            arguments = listOf(navArgument("animeId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val animeId = backStackEntry.arguments?.getString("animeId") ?: ""
+            AnimeScreen(
+                animeId = animeId,
+                onBack = { navController.popBackStack() }
+            )
+        }
         //Pantallas que falta crear y hacer composables
 
         composable(AppScreen.HomeScreen.route) {
@@ -88,15 +100,6 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
         }
         composable(AppScreen.Favs.route) {
 
-        }
-
-        // Ruta con argumento para AnimeDetailCard
-        composable(
-            route = AppScreen.AnimeDetailCard.route,
-            arguments = listOf(navArgument("animeId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val animeId = backStackEntry.arguments?.getString("animeId")
-            // COmposable usando el animeId
         }
     }
 }
