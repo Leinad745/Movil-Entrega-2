@@ -93,4 +93,9 @@ class RegViewModel(application: Application) : AndroidViewModel(application) {
         _usuarioActual.value = user
         _autenticado.value = false
     }
+
+    //Actualizar facvoritos de usuario
+    fun updateUser() {
+        _usuarioActual.value = userRepository.obtenerUsuario()
+    }
 }
