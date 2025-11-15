@@ -77,6 +77,11 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
             AnimeListScreen (
                 onAnimeClickScreen = { animeId ->
                     navController.navigate(AppScreen.AnimeDetail.createRoute(animeId))
+                },onSearchClick = {
+                    navController.navigate(AppScreen.AnimeSearch.route)
+                },
+                onProfileClick = {
+                    navController.navigate(AppScreen.Perfil.route)
                 }
             )
         }

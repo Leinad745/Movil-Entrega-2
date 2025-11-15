@@ -49,26 +49,87 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import com.example.baseproject.viewmodel.RegViewModel
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.tooling.preview.Preview
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimeListScreen(
-    onAnimeClickScreen: (String) -> Unit
+    onAnimeClickScreen: (String) -> Unit,
+    onSearchClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val viewModel: AnimeViewModel = viewModel()
     val listState by viewModel.listState.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.loadList(limit =20, offset = 0)
+        viewModel.loadList(limit = 20, offset = 0)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Anime Ping!") }, actions = {
+                IconButton(onClick = onSearchClick) {
+                    Icon(
+                        imageVector = Icons.Default.Search, contentDescription = "Buscar"
+                    )
+                }
+                IconButton(onClick = onProfileClick) {
+                    Icon(
+                        imageVector = Icons.Default.Person, contentDescription = "Perfil"
+                    )
+                }
+            })
+        }) { innerPadding ->
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp)
+                ) {
+                    Spacer(modifier = Modifier.fillMaxSize().padding(24.dp) )
+
+                    if(listState.isLoading) {
+                        Text("Cargando Animes..")
+                    }
+                    else if(listState.error != null) {
+                        Text("Error: ${listState.error}")
+                    }
+                    else {
+                        Text("Animes cargados correctamente")
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ){
+                            items(listState.animes){ anime ->
+                                AnimeCard(
+                                    anime = anime,
+                                    onClick = {
+                                        onAnimeClickScreen(anime.id)
+                                    }
+                                )
+                            }
+
+                            if(listState.hasMoreData) {
+                                item {
+                                    LaunchedEffect(Unit) {
+                                        viewModel.loadMore()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
-        Text("Anime Ping!")
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         if(listState.isLoading) {
             Text("Cargando Animes..")
@@ -78,8 +139,7 @@ fun AnimeListScreen(
             Text("Error: ${listState.error}")
         }
         else {
-            Text("Animes cargados correctamente")
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -116,7 +176,7 @@ fun AnimeCard(anime: Anime, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(0.7f)
-            .clickable{onClick() },
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
 
@@ -171,7 +231,8 @@ fun AnimeScreen(
         }
     ) { innerPadding->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
                 .fillMaxSize()
         )
         when {
@@ -300,5 +361,3 @@ fun AnimeDetailContent(anime: Anime) {
         }
     }
 }
-
-
