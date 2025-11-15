@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,6 +35,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 @Composable
 fun PerfilScreen(viewModel: PerfilViewModel) {
@@ -108,5 +111,18 @@ fun PerfilScreen(viewModel: PerfilViewModel) {
                 Text("Toma una foto con la cámara")
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = { /* Mandar a pagina de favoritos */ },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            Text(text = "Ver favoritos")
+        }
+
     }
 }
+

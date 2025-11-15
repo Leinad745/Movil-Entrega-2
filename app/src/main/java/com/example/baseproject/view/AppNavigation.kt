@@ -1,2 +1,104 @@
 package com.example.baseproject.view
 
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.baseproject.viewmodel.PerfilViewModel
+import com.example.baseproject.viewmodel.RegViewModel
+
+sealed class AppScreen(val route: String){
+    object Register : AppScreen("register")
+    object Login : AppScreen("login")
+    object QuickLogin : AppScreen("quick_login")
+    object Perfil : AppScreen("perfil")
+    object HomeScreen : AppScreen("home_screen")
+    object WelcomeScreen : AppScreen("welcome_screen")
+    object MainAnimeScreen : AppScreen("main_anime_screen")
+    object AnimeDetailCard : AppScreen("anime_detail/{animeId}")
+    object AnimeSearch : AppScreen("anime_search")
+    object AnimeDetail : AppScreen("anime_detail/{animeName}") {
+        fun createRoute(animeName: String) = "anime_detail/$animeName"
+    }
+    object Favs : AppScreen("favs")
+}
+
+@Composable
+fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
+    val navController = rememberNavController()
+    val startDestination = AppScreen.WelcomeScreen.route
+
+    NavHost(navController, startDestination = startDestination) {
+
+        composable(AppScreen.WelcomeScreen.route) {
+            WelcomeScreen(
+                onLoginClick = { navController.navigate(AppScreen.Login.route) },
+                onRegisterClick = { navController.navigate(AppScreen.Register.route) }
+            )
+        }
+
+        composable(AppScreen.Login.route) {
+            val userExists = regViewModel.usuarioExiste()
+            Log.d("AutoLoginCheck", "Evaluando la existencia del usuario. Valor: $userExists")
+            LaunchedEffect(key1 = userExists) {
+                Log.d("AutoLoginCheck", "LaunchedEffect ejecutado con userExists = $userExists")
+                if (userExists) {
+                    navController.navigate(AppScreen.MainAnimeScreen.route) {
+                        popUpTo(AppScreen.WelcomeScreen.route) { inclusive = true }
+                    }
+                } else {
+                    Log.d("AutoLoginCheck", "Usuario NO existe. Se mostrará LoginScreen.")
+                }
+            }
+            if (!userExists) {
+                LoginScreen(navController = navController, regViewModel = regViewModel)
+            }
+        }
+
+        composable(AppScreen.Register.route) {
+            Registro(navController = navController, regViewModel = regViewModel)
+        }
+
+
+        composable(AppScreen.QuickLogin.route) {
+            registroRapido(navController = navController, regViewModel = regViewModel)
+        }
+
+        composable(AppScreen.Perfil.route) {
+            val perfilViewModel: PerfilViewModel = viewModel()
+            PerfilScreen(viewModel = perfilViewModel)
+        }
+
+        composable(AppScreen.MainAnimeScreen.route) {
+            animeListScreen()
+        }
+
+        //Pantallas que falta crear y hacer composables
+
+        composable(AppScreen.HomeScreen.route) {
+
+        }
+        composable(AppScreen.AnimeSearch.route) {
+
+        }
+        composable(AppScreen.Favs.route) {
+
+        }
+
+        // Ruta con argumento para AnimeDetailCard
+        composable(
+            route = AppScreen.AnimeDetailCard.route,
+            arguments = listOf(navArgument("animeId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val animeId = backStackEntry.arguments?.getString("animeId")
+            // COmposable usando el animeId
+        }
+    }
+}
+
+

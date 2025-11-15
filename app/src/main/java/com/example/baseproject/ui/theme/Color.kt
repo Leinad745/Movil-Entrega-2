@@ -2,14 +2,27 @@ package com.example.baseproject.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Mauve80 = Color(color = 0xFFDDB6F2)
-val Mauve40 = Color(color = 0xFFC38BE6)
+// --- RED ---
+val Red80 = Color(color = 0xFFF38BA8)
+val Red40 = Color(color = 0xFFD96A82)
 
+
+// --- TEAL ---
+val Teal80 = Color(color = 0xFF94E2D5)
+val Teal40 = Color(color = 0xFF6BC7B8)
+
+
+// --- BLUE ---
 val Blue80 = Color(color = 0xFF89B4FA)
 val Blue40 = Color(color = 0xFF5F8FE0)
 
-val Teal80 = Color(color = 0xFF94E2D5)
-val Teal40 = Color(color = 0xFF6BC7B8)
+
+
+// --- LAVENDER ---
+val Lavender80 = Color(color = 0xFFB4BEFE)
+val Lavender40 = Color(color = 0xFF8C97DF)
+
+
 
 val BaseDark = Color(color = 0xFF1E1E2E)
 val BaseLight = Color(color = 0xFFE6E9EF)

@@ -43,10 +43,9 @@ fun Registro(
 
     LaunchedEffect(registroExitoso) {
         if (registroExitoso) {
-            //navController.navigate(AppScre) {
-            //     popUpTo("registro") { inclusive = true }
-            // }
-            //
+            navController.navigate(AppScreen.Login.route) {
+                popUpTo(AppScreen.WelcomeScreen.route)
+            }
         }
     }
 
