@@ -29,9 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.animeping.R
 import com.example.animeping.viewmodel.FavsViewModel
 import com.example.animeping.viewmodel.FavoritesUiState
+import com.example.animeping.R
 
 @Composable
 fun FavScreen(
