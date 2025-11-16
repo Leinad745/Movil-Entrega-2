@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.baseproject"
+    namespace = "com.example.animeping"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.baseproject"
+        applicationId = "com.example.animeping"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
