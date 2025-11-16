@@ -18,7 +18,7 @@ import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun ImagenInteligente(imagenUri: Uri?) {
+fun imagenInteligente(imagenUri: Uri?) {
     if (imagenUri != null) {
         Image(
             painter = rememberAsyncImagePainter(model = imagenUri),

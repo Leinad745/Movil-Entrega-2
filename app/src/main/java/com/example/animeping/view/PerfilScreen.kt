@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.core.content.FileProvider
-import com.example.animeping.view.components.ImagenInteligente
+import com.example.animeping.view.components.imagenInteligente
 import com.example.animeping.viewmodel.PerfilViewModel
 import com.example.animeping.viewmodel.RegViewModel
 import java.io.File
@@ -117,7 +117,7 @@ fun PerfilScreen(viewModel: PerfilViewModel, regViewModel: RegViewModel, onNavig
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
 
-            ImagenInteligente(imagenUri)
+            imagenInteligente(imagenUri)
 
             Spacer(modifier = Modifier.height(24.dp))
 

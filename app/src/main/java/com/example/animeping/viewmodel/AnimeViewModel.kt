@@ -79,7 +79,7 @@ class AnimeViewModel(application: Application) : AndroidViewModel(application){
         viewModelScope.launch {
             try {
                val result = repository.getAnimeList(limit, offset)
-                val newAnimes = result.data ?: emptyList()
+                val newAnimes = result.data
                 _listState.value = listState.value.copy(
                     animes = if (loadMore) _listState.value.animes + newAnimes else newAnimes,
                     isLoading = false,
@@ -134,7 +134,7 @@ class AnimeViewModel(application: Application) : AndroidViewModel(application){
         viewModelScope.launch {
             try {
                 val result = repository.getAnimeByAnime(query)
-                val foundAnimes = result.data ?: emptyList()
+                val foundAnimes = result.data
                 _searchState.value = searchState(
                     animes = foundAnimes,
                     isLoading = false,

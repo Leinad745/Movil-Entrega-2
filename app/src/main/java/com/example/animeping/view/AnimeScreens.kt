@@ -187,11 +187,6 @@ fun AnimeScreen(
             )
         }
     ) { innerPadding->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        )
         when {
             detailState.isLoading -> {
                 Box(modifier =  Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -216,14 +211,14 @@ fun AnimeScreen(
             }
             detailState.anime != null -> {
                 val anime = detailState.anime!!
-                AnimeDetailContent(anime = anime)
+                AnimeDetailContent(anime = anime, innerPadding = innerPadding)
             }
         }
     }
 }
 
 @Composable
-fun AnimeDetailContent(anime: Anime) {
+fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.layout.PaddingValues = androidx.compose.foundation.layout.PaddingValues(0.dp)) {
     val viewModel: AnimeViewModel = viewModel()
     val regViewModel: RegViewModel = viewModel()
 
@@ -237,7 +232,8 @@ fun AnimeDetailContent(anime: Anime) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(innerPadding),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
