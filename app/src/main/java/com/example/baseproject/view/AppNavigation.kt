@@ -38,28 +38,26 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
     NavHost(navController, startDestination = startDestination) {
 
         composable(AppScreen.WelcomeScreen.route) {
-            WelcomeScreen(
-                onLoginClick = { navController.navigate(AppScreen.Login.route) },
-                onRegisterClick = { navController.navigate(AppScreen.Register.route) }
-            )
-        }
-
-        composable(AppScreen.Login.route) {
             val userExists = regViewModel.usuarioExiste()
-            Log.d("AutoLoginCheck", "Evaluando la existencia del usuario. Valor: $userExists")
-            LaunchedEffect(key1 = userExists) {
-                Log.d("AutoLoginCheck", "LaunchedEffect ejecutado con userExists = $userExists")
+
+            LaunchedEffect(userExists) {
                 if (userExists) {
                     navController.navigate(AppScreen.MainAnimeScreen.route) {
                         popUpTo(AppScreen.WelcomeScreen.route) { inclusive = true }
                     }
-                } else {
-                    Log.d("AutoLoginCheck", "Usuario NO existe. Se mostrará LoginScreen.")
                 }
             }
+
             if (!userExists) {
-                LoginScreen(navController = navController, regViewModel = regViewModel)
+                WelcomeScreen(
+                    onLoginClick = { navController.navigate(AppScreen.Login.route) },
+                    onRegisterClick = { navController.navigate(AppScreen.Register.route) }
+                )
             }
+        }
+
+        composable(AppScreen.Login.route) {
+            LoginScreen(navController = navController, regViewModel = regViewModel)
         }
 
         composable(AppScreen.Register.route) {
