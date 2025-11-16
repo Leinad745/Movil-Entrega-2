@@ -38,10 +38,9 @@ fun LoginScreen(
 
     LaunchedEffect(autenticado) {
         if (autenticado) {
-            // Navegar a la pantalla principal o de inicio
-            // navController.navigate("home") {
-            //     popUpTo("login") { inclusive = true }
-            // }
+            navController.navigate(AppScreen.MainAnimeScreen.route) {
+                popUpTo(AppScreen.Login.route) { inclusive = true }
+            }
         }
     }
 
@@ -113,7 +112,8 @@ fun LoginScreen(
             Button(
                 onClick = {
                     sharedRegViewModel.loginCredenciales(nombreUsuario, contrasena)
-                },
+
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

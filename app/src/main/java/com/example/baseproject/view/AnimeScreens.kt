@@ -160,9 +160,7 @@ fun AnimeListScreen(
                         LaunchedEffect(Unit) {
                             viewModel.loadMore()
                         }
-                        if(!listState.isLoading) {
-                            CircularProgressIndicator()
-                        }
+                        CircularProgressIndicator()
                     }
                 }
             }
@@ -327,7 +325,7 @@ fun AnimeDetailContent(anime: Anime) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("📺 ${anime.attributes.episodeCount ?: "?"} eps")
+                    Text("📺 ${anime.attributes.episodeCount} eps")
                     Text("🏷️ ${anime.attributes.status}")
                 }
 
@@ -339,7 +337,7 @@ fun AnimeDetailContent(anime: Anime) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = anime.attributes.description?: "No hay descripción disponible",
+                    text = anime.attributes.description,
                     style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
                 )
 
@@ -354,8 +352,8 @@ fun AnimeDetailContent(anime: Anime) {
 
                 Column {
                     Text("Clasificación: ${anime.attributes.ageRating ?: "N/A"}")
-                    Text("Inicio: ${anime.attributes.startDate ?: "?"}")
-                    Text("Fin: ${anime.attributes.endDate ?: "?"}")
+                    Text("Inicio: ${anime.attributes.startDate}")
+                    Text("Fin: ${anime.attributes.endDate}")
                 }
             }
         }
