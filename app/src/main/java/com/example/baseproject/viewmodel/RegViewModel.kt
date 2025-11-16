@@ -70,7 +70,7 @@ class RegViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logout() {
         _autenticado.value = false
-        _usuarioActual.value = userRepository.obtenerUsuario()
+        _usuarioActual.value = null
     }
 
     fun limpiarError() {

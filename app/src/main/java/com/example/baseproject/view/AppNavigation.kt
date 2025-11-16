@@ -78,7 +78,8 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
             PerfilScreen(
                 viewModel = perfilViewModel,
                 onNavigateToFavs = { navController.navigate(AppScreen.FavsScreen.route) },
-                navController = navController
+                navController = navController,
+                regViewModel = regViewModel
 
             )
         }
