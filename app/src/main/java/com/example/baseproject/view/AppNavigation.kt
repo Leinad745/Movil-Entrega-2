@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.baseproject.viewmodel.AnimeViewModel
 import com.example.baseproject.viewmodel.PerfilViewModel
 import com.example.baseproject.viewmodel.RegViewModel
 
@@ -24,13 +25,15 @@ sealed class AppScreen(val route: String){
     object AnimeDetail : AppScreen("anime_detail/{animeId}") {
         fun createRoute(animeName: String) = "anime_detail/$animeName"
     }
-    object Favs : AppScreen("favs")
+    object FavsScreen : AppScreen("favs_screen")
 }
 
 @Composable
 fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
     val navController = rememberNavController()
     val startDestination = AppScreen.WelcomeScreen.route
+
+    val animeViewModel: AnimeViewModel = viewModel()
 
     NavHost(navController, startDestination = startDestination) {
 
@@ -68,9 +71,16 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
             registroRapido(navController = navController, regViewModel = regViewModel)
         }
 
+        composable(AppScreen.FavsScreen.route) {
+            FavScreen(navController = navController)
+        }
+
         composable(AppScreen.Perfil.route) {
             val perfilViewModel: PerfilViewModel = viewModel()
-            PerfilScreen(viewModel = perfilViewModel)
+            PerfilScreen(
+                viewModel = perfilViewModel,
+                onNavigateToFavs = { navController.navigate(AppScreen.FavsScreen.route) }
+            )
         }
 
         composable(AppScreen.MainAnimeScreen.route) {
@@ -103,9 +113,7 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
         composable(AppScreen.AnimeSearch.route) {
 
         }
-        composable(AppScreen.Favs.route) {
 
-        }
     }
 }
 

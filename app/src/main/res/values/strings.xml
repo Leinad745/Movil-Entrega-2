@@ -5,4 +5,5 @@
     <string name="welcome_subtitle">This is your base Android project</string>
     <string name="welcome_description">Built with Kotlin and Jetpack Compose. Start building your amazing app from here.</string>
     <string name="get_started">Get Started</string>
+    <string name="my_favorites_title">My Favorites</string><string name="no_favorites_message">You haven\'t added any favorites yet.</string>
 </resources>

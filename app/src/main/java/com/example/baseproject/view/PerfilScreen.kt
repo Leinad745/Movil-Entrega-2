@@ -7,10 +7,12 @@ import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -28,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import androidx.core.content.FileProvider
 import com.example.baseproject.view.components.ImagenInteligente
 import com.example.baseproject.viewmodel.PerfilViewModel
@@ -38,7 +41,7 @@ import java.util.Locale
 
 
 @Composable
-fun PerfilScreen(viewModel: PerfilViewModel) {
+fun PerfilScreen(viewModel: PerfilViewModel,  onNavigateToFavs: () -> Unit) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val imagenUri = uiState.imagenUri
@@ -84,7 +87,11 @@ fun PerfilScreen(viewModel: PerfilViewModel) {
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
 
             ImagenInteligente(imagenUri)
 
@@ -115,14 +122,16 @@ fun PerfilScreen(viewModel: PerfilViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Mandar a pagina de favoritos */ },
+            onClick = onNavigateToFavs,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.secondary
             )
         ) {
             Text(text = "Ver favoritos")
         }
-
     }
 }
 
