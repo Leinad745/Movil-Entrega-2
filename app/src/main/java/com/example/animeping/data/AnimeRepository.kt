@@ -21,5 +21,8 @@ class AnimeRepository
             throw e
         }
     }
+    suspend fun getAnimeByAnime(name: String): AnimeListData {
+        return api.fetchAnimesByName(name)
+    }
 
 }

@@ -26,18 +26,30 @@ data class AnimeDetailState(
     val error: String? = null,
 )
 
+data class searchState(
+    val animes: List<Anime> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
+
 class AnimeViewModel(application: Application) : AndroidViewModel(application){
 
     private val repository: AnimeRepository = AnimeRepository()
     private val userRepository: UserRepository = UserRepository.getInstance(application)
 
 
+    //lista de animes
     private val _listState = MutableStateFlow(AnimeListUiState())
     var listState: StateFlow<AnimeListUiState> = _listState.asStateFlow()
         private set
 
+    //detalles de anime
     private val _detailState = MutableStateFlow(AnimeDetailState())
     var detailState: StateFlow<AnimeDetailState> = _detailState.asStateFlow()
+
+    //anime por nombre
+    private val _searchState = MutableStateFlow(searchState())
+    val searchState: StateFlow<searchState> = _searchState.asStateFlow()
 
     fun toggleFavorite(animeId: String) {
         viewModelScope.launch {
@@ -117,8 +129,26 @@ class AnimeViewModel(application: Application) : AndroidViewModel(application){
         }
     }
 
-
-
+    fun searchAnimeByName(query: String) {
+        _searchState.value = searchState(isLoading = true, error = null)
+        viewModelScope.launch {
+            try {
+                val result = repository.getAnimeByAnime(query)
+                val foundAnimes = result.data ?: emptyList()
+                _searchState.value = searchState(
+                    animes = foundAnimes,
+                    isLoading = false,
+                    error = null
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _searchState.value = searchState(
+                    isLoading = false,
+                    error = e.message ?: "Error en la búsqueda"
+                )
+            }
+        }
+    }
     fun loadMore() {
         if(!_listState.value.isLoading && _listState.value.hasMoreData) {
             loadList(
