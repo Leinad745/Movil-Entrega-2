@@ -111,9 +111,13 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
 
         }
         composable(AppScreen.AnimeSearch.route) {
-
+            AnimeSearchScreen(
+                onBack = { navController.popBackStack() },
+                onAnimeClick = { animeId ->
+                    navController.navigate(AppScreen.AnimeDetail.createRoute(animeId))
+                }
+            )
         }
-
     }
 }
 

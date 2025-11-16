@@ -1,6 +1,9 @@
 package com.example.baseproject.view
 
-import android.graphics.Color
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,11 +50,10 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import com.example.baseproject.viewmodel.RegViewModel
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.setValue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,91 +85,74 @@ fun AnimeListScreen(
                 }
             })
         }) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp)
-                ) {
-                    Spacer(modifier = Modifier.fillMaxSize().padding(24.dp) )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-                    if(listState.isLoading) {
-                        Text("Cargando Animes..")
+            when {
+                listState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Cargando Animes...")
+                        }
                     }
-                    else if(listState.error != null) {
+                }
+                listState.error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text("Error: ${listState.error}")
                     }
-                    else {
-                        Text("Animes cargados correctamente")
-                        Spacer(modifier = Modifier.height(16.dp))
+                }
+                else -> {
+                    Text(
+                        "Animes cargados correctamente",
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
 
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ){
-                            items(listState.animes){ anime ->
-                                AnimeCard(
-                                    anime = anime,
-                                    onClick = {
-                                        onAnimeClickScreen(anime.id)
-                                    }
-                                )
-                            }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(listState.animes) { anime ->
+                            AnimeCard(
+                                anime = anime,
+                                onClick = {
+                                    onAnimeClickScreen(anime.id)
+                                }
+                            )
+                        }
 
-                            if(listState.hasMoreData) {
-                                item {
-                                    LaunchedEffect(Unit) {
-                                        viewModel.loadMore()
-                                    }
+                        if (listState.hasMoreData) {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                                LaunchedEffect(Unit) {
+                                    viewModel.loadMore()
                                 }
                             }
                         }
-                    }
-                }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if(listState.isLoading) {
-            Text("Cargando Animes..")
-            CircularProgressIndicator()
-        }
-        else if(listState.error != null) {
-            Text("Error: ${listState.error}")
-        }
-        else {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ){
-                items(listState.animes){ anime ->
-                    AnimeCard(
-                        anime = anime,
-                        onClick = {
-                            onAnimeClickScreen(anime.id)
-                        }
-                    )
-                }
-
-                if(listState.hasMoreData) {
-                    item {
-                        LaunchedEffect(Unit) {
-                            viewModel.loadMore()
-                        }
-                        CircularProgressIndicator()
                     }
                 }
             }
         }
     }
 }
-
 @Composable
 fun AnimeCard(anime: Anime, onClick: () -> Unit) {
     Card(
@@ -263,6 +248,7 @@ fun AnimeScreen(
     }
 }
 
+
 @Composable
 fun AnimeDetailContent(anime: Anime) {
     val viewModel: AnimeViewModel = viewModel()
@@ -354,6 +340,152 @@ fun AnimeDetailContent(anime: Anime) {
                     Text("Clasificación: ${anime.attributes.ageRating ?: "N/A"}")
                     Text("Inicio: ${anime.attributes.startDate}")
                     Text("Fin: ${anime.attributes.endDate}")
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AnimeSearchScreen(
+    onBack: () -> Unit,
+    onAnimeClick: (String) -> Unit
+) {
+    val viewModel: AnimeViewModel = viewModel()
+    val searchState by viewModel.searchState.collectAsState()
+
+    var searchQuery by remember { mutableStateOf("") }
+    var debounceJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = { newQuery ->
+                            searchQuery = newQuery
+
+                            debounceJob?.cancel()
+
+                            debounceJob = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                kotlinx.coroutines.delay(500)
+                                if (newQuery.isNotEmpty() && newQuery.length >= 3) {
+                                    viewModel.searchAnimeByName(newQuery)
+                                } else if (newQuery.isEmpty()) {
+                                    viewModel.searchAnimeByName("")
+                                }
+                            }
+                        },
+                        placeholder = { Text("Buscar anime...") },
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Buscar"
+                            )
+                        },
+                        singleLine = true
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Volver"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            when {
+                searchState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Buscando animes...")
+                        }
+                    }
+                }
+
+                searchState.error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Error: ${searchState.error}")
+                            Spacer(modifier = Modifier.height(16.dp))
+                            androidx.compose.material3.Button(
+                                onClick = {
+                                    if (searchQuery.isNotEmpty()) {
+                                        viewModel.searchAnimeByName(searchQuery)
+                                    }
+                                }
+                            ) {
+                                Text("Reintentar")
+                            }
+                        }
+                    }
+                }
+
+                searchQuery.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Escribe el nombre de un anime para buscar")
+                    }
+                }
+
+                searchQuery.length < 3 -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Escribe al menos 3 caracteres")
+                    }
+                }
+
+                searchState.animes.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No se encontraron animes para '$searchQuery'")
+                    }
+                }
+
+                else -> {
+                    Text(
+                        text = "Resultados para $searchQuery:",
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(searchState.animes) { anime ->
+                            AnimeCard(
+                                anime = anime,
+                                onClick = { onAnimeClick(anime.id) }
+                            )
+                        }
+                    }
                 }
             }
         }
