@@ -251,7 +251,7 @@ fun AnimeDetailContent(anime: Anime, innerPadding: PaddingValues = PaddingValues
                         .fillMaxWidth()
                         .height(400.dp)
                         .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
