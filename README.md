@@ -1,10 +1,10 @@
-# AnimePing! 🍜
+# AnimePing!
 
 Proyecto universitario "Móvil - Entrega 2". Es una aplicación nativa para Android desarrollada en Kotlin que permite a los usuarios buscar animes, guardarlos en una lista personal y acceder a la aplicación mediante un simple login.
 
 ---
 
-## 🚀 Características Principales
+## Características Principales
 
 * **Autenticación de Usuarios**: Sistema de inicio de sesión y registro simple para gestionar las cuentas de usuario.
 * **Búsqueda de Animes**: Integra una función para buscar animes (probablemente consumiendo una API externa).
@@ -13,7 +13,7 @@ Proyecto universitario "Móvil - Entrega 2". Es una aplicación nativa para Andr
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 * **Lenguaje**: 100% [Kotlin](https://kotlinlang.org/)
 * **Plataforma**: Android Nativo
@@ -22,6 +22,6 @@ Proyecto universitario "Móvil - Entrega 2". Es una aplicación nativa para Andr
 
 ---
 
-## ⚙️ Cómo Construir el Proyecto
+## Cómo Construir el Proyecto
 
 Para compilar el proyecto y generar el APK, puedes usar los siguientes comandos de Gradle:
