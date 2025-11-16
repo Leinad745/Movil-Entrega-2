@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +39,8 @@ import androidx.navigation.NavController
 import androidx.core.content.FileProvider
 import com.example.baseproject.view.components.ImagenInteligente
 import com.example.baseproject.viewmodel.PerfilViewModel
+import com.example.baseproject.viewmodel.RegViewModel
+import androidx.compose.material.icons.filled.Logout
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -45,7 +48,7 @@ import java.util.Locale
 
 
 @Composable
-fun PerfilScreen(viewModel: PerfilViewModel,  onNavigateToFavs: () -> Unit, navController: NavController) {
+fun PerfilScreen(viewModel: PerfilViewModel, regViewModel: RegViewModel, onNavigateToFavs: () -> Unit, navController: NavController) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val imagenUri = uiState.imagenUri
@@ -97,6 +100,18 @@ fun PerfilScreen(viewModel: PerfilViewModel,  onNavigateToFavs: () -> Unit, navC
                     contentDescription = "Botón para ir hacia atrás"
                 )
             }
+
+        IconButton(onClick = {
+            regViewModel.logout()
+            navController.navigate(AppScreen.Login.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }, modifier = Modifier.align(Alignment.TopEnd)) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = "Cerrar sesión"
+            )
+        }
         Column(modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.Center),
