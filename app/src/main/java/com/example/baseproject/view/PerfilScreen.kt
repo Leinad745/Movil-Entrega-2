@@ -15,8 +15,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +45,7 @@ import java.util.Locale
 
 
 @Composable
-fun PerfilScreen(viewModel: PerfilViewModel,  onNavigateToFavs: () -> Unit) {
+fun PerfilScreen(viewModel: PerfilViewModel,  onNavigateToFavs: () -> Unit, navController: NavController) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val imagenUri = uiState.imagenUri
@@ -87,6 +91,12 @@ fun PerfilScreen(viewModel: PerfilViewModel,  onNavigateToFavs: () -> Unit) {
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
+            IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.align(Alignment.TopStart)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Botón para ir hacia atrás"
+                )
+            }
         Column(modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.Center),
