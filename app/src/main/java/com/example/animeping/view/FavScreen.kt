@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.animeping.viewmodel.FavsViewModel
 import com.example.animeping.viewmodel.FavoritesUiState
 import com.example.animeping.R
+import com.example.baseproject.view.AnimeCard
 
 @Composable
 fun FavScreen(
