@@ -73,103 +73,59 @@ fun AnimeListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Anime Ping!") }, actions = {
-                IconButton(onClick = onSearchClick) {
-                    Icon(
-                        imageVector = Icons.Default.Search, contentDescription = "Buscar"
-                    )
-                }
-                IconButton(onClick = onProfileClick) {
-                    Icon(
-                        imageVector = Icons.Default.Person, contentDescription = "Perfil"
-                    )
-                }
-            })
-        }) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp)
-                ) {
-                    Spacer(modifier = Modifier.fillMaxSize().padding(24.dp) )
-
-                    if(listState.isLoading) {
-                        Text("Cargando Animes..")
+            TopAppBar(
+                title = { Text("Anime Ping!") },
+                actions = {
+                    IconButton(onClick = onSearchClick) {
+                        Icon(Icons.Default.Search, contentDescription = "Buscar")
                     }
-                    else if(listState.error != null) {
-                        Text("Error: ${listState.error}")
+                    IconButton(onClick = onProfileClick) {
+                        Icon(Icons.Default.Person, contentDescription = "Perfil")
                     }
-                    else {
-                        Text("Animes cargados correctamente")
-                        Spacer(modifier = Modifier.height(16.dp))
+                }
+            )
+        }
+    ) { innerPadding ->
 
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ){
-                            items(listState.animes){ anime ->
-                                AnimeCard(
-                                    anime = anime,
-                                    onClick = {
-                                        onAnimeClickScreen(anime.id)
-                                    }
-                                )
-                            }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(24.dp)
+        ) {
 
-                            if(listState.hasMoreData) {
-                                item {
-                                    LaunchedEffect(Unit) {
-                                        viewModel.loadMore()
-                                    }
+            when {
+                listState.isLoading -> Text("Cargando Animes..")
+                listState.error != null -> Text("Error: ${listState.error}")
+                else -> {
+
+                    Text("Animes cargados correctamente")
+                    Spacer(Modifier.height(16.dp))
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(listState.animes) { anime ->
+                            AnimeCard(anime) { onAnimeClickScreen(anime.id) }
+                        }
+
+                        if (listState.hasMoreData) {
+                            item {
+                                LaunchedEffect(Unit) {
+                                    viewModel.loadMore()
                                 }
+                                CircularProgressIndicator()
                             }
                         }
-                    }
-                }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if(listState.isLoading) {
-            Text("Cargando Animes..")
-            CircularProgressIndicator()
-        }
-        else if(listState.error != null) {
-            Text("Error: ${listState.error}")
-        }
-        else {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ){
-                items(listState.animes){ anime ->
-                    AnimeCard(
-                        anime = anime,
-                        onClick = {
-                            onAnimeClickScreen(anime.id)
-                        }
-                    )
-                }
-
-                if(listState.hasMoreData) {
-                    item {
-                        LaunchedEffect(Unit) {
-                            viewModel.loadMore()
-                        }
-                        CircularProgressIndicator()
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun AnimeCard(anime: Anime, onClick: () -> Unit) {
