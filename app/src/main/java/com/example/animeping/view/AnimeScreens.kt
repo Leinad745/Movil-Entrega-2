@@ -1,4 +1,4 @@
-package com.example.baseproject.view
+package com.example.animeping.view
 
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -50,11 +51,16 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import com.example.animeping.viewmodel.RegViewModel
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -200,7 +206,7 @@ fun AnimeScreen(
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("Error: ${detailState.error}")
-                        androidx.compose.material3.Button(
+                        Button(
                             onClick = { viewModel.loadAnimeDetail(animeId) },
                             modifier = Modifier.padding(top = 16.dp)
                         ) {
@@ -218,7 +224,7 @@ fun AnimeScreen(
 }
 
 @Composable
-fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.layout.PaddingValues = androidx.compose.foundation.layout.PaddingValues(0.dp)) {
+fun AnimeDetailContent(anime: Anime, innerPadding: PaddingValues = PaddingValues(0.dp)) {
     val viewModel: AnimeViewModel = viewModel()
     val regViewModel: RegViewModel = viewModel()
 
@@ -233,7 +239,7 @@ fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.l
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
@@ -258,7 +264,7 @@ fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.l
                     // Title takes up available space
                     Text(
                         text = anime.attributes.canonicalTitle,
-                        style = androidx.compose.material3.MaterialTheme.typography.headlineLarge,
+                        style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
@@ -269,7 +275,7 @@ fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.l
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
                             contentDescription = "Favorite",
-                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Gray
+                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.Gray
                         )
                     }
                 }
@@ -288,12 +294,12 @@ fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.l
 
                 Text(
                     text = "Descripción",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = anime.attributes.description,
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -301,7 +307,7 @@ fun AnimeDetailContent(anime: Anime, innerPadding: androidx.compose.foundation.l
                 // Detalles adicionales
                 Text(
                     text = "Detalles",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -325,7 +331,7 @@ fun AnimeSearchScreen(
     val searchState by viewModel.searchState.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
-    var debounceJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
+    var debounceJob by remember { mutableStateOf<Job?>(null) }
 
     Scaffold(
         topBar = {
@@ -338,8 +344,8 @@ fun AnimeSearchScreen(
 
                             debounceJob?.cancel()
 
-                            debounceJob = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-                                kotlinx.coroutines.delay(500)
+                            debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                                delay(500)
                                 if (newQuery.isNotEmpty() && newQuery.length >= 3) {
                                     viewModel.searchAnimeByName(newQuery)
                                 } else if (newQuery.isEmpty()) {
@@ -397,7 +403,7 @@ fun AnimeSearchScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("Error: ${searchState.error}")
                             Spacer(modifier = Modifier.height(16.dp))
-                            androidx.compose.material3.Button(
+                            Button(
                                 onClick = {
                                     if (searchQuery.isNotEmpty()) {
                                         viewModel.searchAnimeByName(searchQuery)

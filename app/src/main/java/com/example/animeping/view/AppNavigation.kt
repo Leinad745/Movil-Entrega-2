@@ -11,9 +11,6 @@ import androidx.navigation.navArgument
 import com.example.animeping.viewmodel.AnimeViewModel
 import com.example.animeping.viewmodel.PerfilViewModel
 import com.example.animeping.viewmodel.RegViewModel
-import com.example.baseproject.view.AnimeListScreen
-import com.example.baseproject.view.AnimeScreen
-import com.example.baseproject.view.AnimeSearchScreen
 
 sealed class AppScreen(val route: String){
     object Register : AppScreen("register")
