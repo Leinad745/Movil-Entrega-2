@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaseAndroidProject">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.animeping.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.BaseAndroidProject">
             <intent-filter>
