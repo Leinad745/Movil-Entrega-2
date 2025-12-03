@@ -1,23 +1,27 @@
-# ANIMEPING! (RELLENAR ESTO LUEGO)
+# AnimePing!
 
+Proyecto universitario "Móvil - Entrega 2". Es una aplicación nativa para Android desarrollada en Kotlin que permite a los usuarios buscar animes, guardarlos en una lista personal y acceder a la aplicación mediante un simple login.
 
-### Agregar Íconos de Lanzamiento
+---
 
-1. Haz clic derecho en la carpeta `res` en Android Studio
-2. Selecciona "New" → "Image Asset"
-3. Sigue el asistente para generar íconos
-4. O usa la herramienta en línea: https://romannurik.github.io/AndroidAssetStudio/
+## Características Principales
 
-### Compilación de Depuración
+* **Autenticación de Usuarios**: Sistema de inicio de sesión y registro simple para gestionar las cuentas de usuario.
+* **Búsqueda de Animes**: Integra una función para buscar animes (probablemente consumiendo una API externa).
+* **Lista de Favoritos**: Permite a los usuarios guardar sus animes preferidos para consultarlos más tarde.
+* **Navegación Intuitiva**: Una interfaz de usuario limpia desarrollada con componentes nativos de Android.
 
-```bash
-./gradlew assembleDebug
-```
+---
 
-### Compilación de Lanzamiento
+## Tecnologías Utilizadas
 
-```bash
-./gradlew assembleRelease
-```
+* **Lenguaje**: 100% [Kotlin](https://kotlinlang.org/)
+* **Plataforma**: Android Nativo
+* **Arquitectura**: (Puedes añadir aquí la arquitectura que usaron, ej: MVVM, MVI)
+* **Librerías Principales**: (Puedes añadir las librerías clave, ej: Retrofit, Room, Coroutines, Jetpack Compose/Vistas XML)
 
-El APK estará en `app/build/outputs/apk/`
+---
+
+## Cómo Construir el Proyecto
+
+Para compilar el proyecto y generar el APK, puedes usar los siguientes comandos de Gradle:
