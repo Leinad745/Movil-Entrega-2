@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("jacoco")
 }
 
 android {
@@ -28,6 +29,11 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+
     }
 
     compileOptions {
@@ -96,4 +102,44 @@ dependencies {
 
     //other dependencies
     implementation("androidx.compose.material:material-icons-extended")
+}
+//JaCoCo
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest") // Ejecuta los tests antes de generar el reporte
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    // Archivos que queremos excluir del reporte
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*",
+        "**/Manifest*.*", "**/*Test*.*", "android/**/*",
+        "**/model/*", //Excluir modelos de datos simples si quieres
+        "**/*databinding/**/*",
+        "**/*generated/**/*",
+        "**/AnimeUiState.kt",
+        "**/MainViewModel.kt",
+        "**/remote/*",
+        "**/MainActivity.kt"
+    )
+
+    val debugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug").get().asFile) {
+        exclude(fileFilter)
+    }
+
+    // Directorio de tu código fuente
+    val mainSrc = "src/main/java"
+
+    sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
+    classDirectories.setFrom(files(debugTree))
+
+    // Donde JaCoCo busca el resultado de los tests
+    executionData.setFrom(fileTree(layout.buildDirectory.get().asFile) {
+        include(
+            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+            "jacoco/testDebugUnitTest.exec"
+        )
+    })
 }
