@@ -1,3 +1,4 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,6 +8,15 @@ plugins {
 android {
     namespace = "com.example.animeping"
     compileSdk = 34
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11 // Apunta a Java 11
+        targetCompatibility = JavaVersion.VERSION_11 // Apunta a Java 11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11" // Le dice a Kotlin que compile para JVM 11
+    }
 
     defaultConfig {
         applicationId = "com.example.animeping"
@@ -34,15 +44,6 @@ android {
             enableAndroidTestCoverage = true
         }
 
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -95,6 +96,10 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("androidx.arch.core:core-testing:2.2.0") // Para probar LiveData
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") // Para testear coroutines
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 
     // Debug dependencies
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -105,41 +110,55 @@ dependencies {
 }
 //JaCoCo
 tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn("testDebugUnitTest") // Ejecuta los tests antes de generar el reporte
+    dependsOn("testDebugUnitTest")
+
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for the debug build."
 
     reports {
         xml.required.set(true)
         html.required.set(true)
+        csv.required.set(false)
     }
 
-    // Archivos que queremos excluir del reporte
-    val fileFilter = listOf(
-        "**/R.class", "**/R$*.class", "**/BuildConfig.*",
-        "**/Manifest*.*", "**/*Test*.*", "android/**/*",
-        "**/model/*", //Excluir modelos de datos simples si quieres
-        "**/*databinding/**/*",
-        "**/*generated/**/*",
-        "**/AnimeUiState.kt",
-        "**/MainViewModel.kt",
-        "**/remote/*",
-        "**/MainActivity.kt"
+    val excludes = listOf(
+        // Exclusiones de Android y Kotlin
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*",
+        "**/model/**",
+
+        // Exclusiones de Compose
+        "**/*Composable*.*",
+        "**/*Preview*.*",
+        "**/*Previews*.*",
+        "**/*theme*.*",
+        "**/*navigation*.*",
+        "**/ui/theme/**",
+        "**/MainActivity.class",
+
+        // Exclusiones de librerías comunes
+        "**/*_Impl*.*",
+        "**/*_Factory*.*",
+        "**/*_Provide*.*",
+        "**/*Hilt*.*",
+        "**/*Dagger*.*"
     )
 
-    val debugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug").get().asFile) {
-        exclude(fileFilter)
+    val classDirectoriesTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) {
+        exclude(excludes)
     }
+    classDirectories.setFrom(classDirectoriesTree)
 
-    // Directorio de tu código fuente
-    val mainSrc = "src/main/java"
+    val sourceDirectoriesTree = files("src/main/java", "src/main/kotlin")
+    sourceDirectories.setFrom(sourceDirectoriesTree)
 
-    sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
-    classDirectories.setFrom(files(debugTree))
-
-    // Donde JaCoCo busca el resultado de los tests
-    executionData.setFrom(fileTree(layout.buildDirectory.get().asFile) {
-        include(
-            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "jacoco/testDebugUnitTest.exec"
-        )
-    })
+    val executionDataTree = fileTree(layout.buildDirectory) {
+        include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+    }
+    executionData.setFrom(executionDataTree)
 }
+
