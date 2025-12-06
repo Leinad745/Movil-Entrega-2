@@ -139,4 +139,73 @@ class TestRegViewModel {
         assertNotEquals(true, viewModel.autenticado.value)
         assertEquals("Nombre de usuario o contraseña incorrectos.", viewModel.errorLogin.value)
     }
+
+    @Test
+    fun `test refrescarUsuario actualiza el usuario desde el repositorio`() = runTest {
+        // Arrange: Define el usuario que el repositorio debería devolver
+        // Corregido: El ID va como último parámetro nombrado
+        val usuarioRefrescado = Usuario("new@example.com", "newuser", "newpass", 123, emptyList())
+        whenever(mockUserRepository.obtenerUsuario()).thenReturn(usuarioRefrescado)
+
+        // Act: Llama a la función para refrescar el usuario
+        viewModel.refrescarUsuario()
+
+        // Assert: Verifica que el LiveData del usuario actual se actualizó
+        assertEquals(usuarioRefrescado, viewModel.usuarioActual.value)
+    }
+
+    @Test
+    fun `test logout actualiza LiveData correctamente`() = runTest {
+        // Arrange: Simula un estado de login previo usando reflexión para acceder a los campos privados
+        val autenticadoField = RegViewModel::class.java.getDeclaredField("_autenticado")
+        autenticadoField.isAccessible = true
+        (autenticadoField.get(viewModel) as MutableLiveData<Boolean>).value = true
+
+        val usuarioActualField = RegViewModel::class.java.getDeclaredField("_usuarioActual")
+        usuarioActualField.isAccessible = true
+        (usuarioActualField.get(viewModel) as MutableLiveData<Usuario?>).value = Usuario("test@example.com", "testuser", "password", 123, emptyList())
+
+        // Act: Llama a la función de logout
+        viewModel.logout()
+
+        // Assert: Verifica que el estado se haya limpiado (ahora sí puedes leer el .value público)
+        assertEquals(false, viewModel.autenticado.value)
+        assertNull(viewModel.usuarioActual.value)
+    }
+
+    @Test
+    fun `test limpiarError borra el mensaje de error`() = runTest {
+        // Arrange: Simula un mensaje de error existente usando reflexión
+        val errorLoginField = RegViewModel::class.java.getDeclaredField("_errorLogin")
+        errorLoginField.isAccessible = true
+        (errorLoginField.get(viewModel) as MutableLiveData<String?>).value = "Este es un error de prueba."
+
+        // Act: Llama a la función para limpiar el error
+        viewModel.limpiarError()
+
+        // Assert: Verifica que el error se haya eliminado
+        assertNull(viewModel.errorLogin.value)
+    }
+
+    @Test
+    fun `test borrarUsuario elimina el usuario y resetea el estado`() = runTest {
+        // Arrange: Simula un estado de login usando reflexión
+        val autenticadoField = RegViewModel::class.java.getDeclaredField("_autenticado")
+        autenticadoField.isAccessible = true
+        (autenticadoField.get(viewModel) as MutableLiveData<Boolean>).value = true
+
+        val usuarioActualField = RegViewModel::class.java.getDeclaredField("_usuarioActual")
+        usuarioActualField.isAccessible = true
+        (usuarioActualField.get(viewModel) as MutableLiveData<Usuario?>).value = Usuario("test@example.com", "testuser", "password", 123, emptyList())
+
+        // Act: Llama a la función para borrar el usuario
+        viewModel.borrarUsuario()
+
+        // Assert: Verifica que el usuario fue borrado del repositorio y el estado reseteado
+        verify(mockUserRepository).borrarUsuario()
+        assertNull(viewModel.usuarioActual.value)
+        assertEquals(false, viewModel.autenticado.value)
+    }
+
+
 }

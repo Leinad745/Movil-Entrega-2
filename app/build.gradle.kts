@@ -133,6 +133,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         "**/*Test*.*",
         "android/**/*.*",
         "**/model/**",
+        "**/viewmodel/AnimeUiState.kt",
 
         // Exclusiones de Compose
         "**/*Composable*.*",
