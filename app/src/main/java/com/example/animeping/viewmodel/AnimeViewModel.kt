@@ -1,12 +1,12 @@
 package com.example.animeping.viewmodel
 
-import com.example.animeping.data.AnimeRepository
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.animeping.data.UserRepository
+import com.example.animeping.data.AnimeRepository
 import com.example.animeping.model.Anime
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -32,11 +32,9 @@ data class searchState(
     val error: String? = null,
 )
 
-class AnimeViewModel(application: Application) : AndroidViewModel(application){
-
-    private val repository: AnimeRepository = AnimeRepository()
-    private val userRepository: UserRepository = UserRepository.getInstance(application)
-
+class AnimeViewModel(application: Application,
+    private val repository: AnimeRepository = AnimeRepository(),
+    private val userRepository: UserRepository = UserRepository.getInstance(application)) : AndroidViewModel(application){
 
     //lista de animes
     private val _listState = MutableStateFlow(AnimeListUiState())
