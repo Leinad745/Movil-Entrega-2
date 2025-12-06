@@ -18,7 +18,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -142,7 +141,6 @@ class AnimeViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.searchState.value
-
 
         assertNull(state.error)
         assertFalse(state.animes.isEmpty())
