@@ -32,6 +32,8 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
     val navController = rememberNavController()
     val startDestination = AppScreen.WelcomeScreen.route
 
+    val animeViewModel: AnimeViewModel = viewModel(factory = AnimeViewModel.fabrica)
+
     NavHost(navController, startDestination = startDestination) {
 
         composable(AppScreen.WelcomeScreen.route) {
@@ -83,6 +85,7 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
 
         composable(AppScreen.MainAnimeScreen.route) {
             AnimeListScreen (
+                viewModel = animeViewModel,
                 onAnimeClickScreen = { animeId ->
                     navController.navigate(AppScreen.AnimeDetail.createRoute(animeId))
                 },onSearchClick = {
@@ -99,6 +102,7 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
         ) { backStackEntry ->
             val animeId = backStackEntry.arguments?.getString("animeId") ?: ""
             AnimeScreen(
+                viewModel = animeViewModel,
                 animeId = animeId,
                 onBack = { navController.popBackStack() }
             )
@@ -110,6 +114,7 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
         }
         composable(AppScreen.AnimeSearch.route) {
             AnimeSearchScreen(
+                viewModel = animeViewModel,
                 onBack = { navController.popBackStack() },
                 onAnimeClick = { animeId ->
                     navController.navigate(AppScreen.AnimeDetail.createRoute(animeId))

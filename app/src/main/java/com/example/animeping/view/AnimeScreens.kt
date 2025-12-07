@@ -66,11 +66,11 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimeListScreen(
+    viewModel: AnimeViewModel,
     onAnimeClickScreen: (String) -> Unit,
     onSearchClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
-    val viewModel: AnimeViewModel = viewModel()
     val listState by viewModel.listState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -167,10 +167,10 @@ fun AnimeCard(anime: Anime, onClick: () -> Unit) {
 @Composable
 fun AnimeScreen(
     animeId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: AnimeViewModel
 ) {
 
-    val viewModel: AnimeViewModel = viewModel()
     val detailState by viewModel.detailState.collectAsState()
 
     LaunchedEffect(animeId) {
@@ -217,15 +217,14 @@ fun AnimeScreen(
             }
             detailState.anime != null -> {
                 val anime = detailState.anime!!
-                AnimeDetailContent(anime = anime, innerPadding = innerPadding)
+                AnimeDetailContent(viewModel = viewModel,anime = anime, innerPadding = innerPadding)
             }
         }
     }
 }
 
 @Composable
-fun AnimeDetailContent(anime: Anime, innerPadding: PaddingValues = PaddingValues(0.dp)) {
-    val viewModel: AnimeViewModel = viewModel()
+fun AnimeDetailContent(viewModel: AnimeViewModel,anime: Anime, innerPadding: PaddingValues = PaddingValues(0.dp)) {
     val regViewModel: RegViewModel = viewModel()
 
     val currentUser by regViewModel.usuarioActual.observeAsState()
@@ -324,10 +323,10 @@ fun AnimeDetailContent(anime: Anime, innerPadding: PaddingValues = PaddingValues
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimeSearchScreen(
+    viewModel: AnimeViewModel,
     onBack: () -> Unit,
     onAnimeClick: (String) -> Unit
 ) {
-    val viewModel: AnimeViewModel = viewModel()
     val searchState by viewModel.searchState.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
