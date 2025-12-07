@@ -32,8 +32,6 @@ fun AppNavigation(regViewModel: RegViewModel = viewModel()) {
     val navController = rememberNavController()
     val startDestination = AppScreen.WelcomeScreen.route
 
-    val animeViewModel: AnimeViewModel = viewModel()
-
     NavHost(navController, startDestination = startDestination) {
 
         composable(AppScreen.WelcomeScreen.route) {
